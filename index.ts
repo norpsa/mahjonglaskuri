@@ -1,5 +1,5 @@
 import { Wind, Suit, Ending, SetType, Dragon } from "./enums";
-import { countChow, isValueless } from "./utils";
+import { countChow, isValueless, isSameTile } from "./utils";
 
 interface NumberTile {
     suit: 'BAMBOO' | 'DOTS' | 'CHARS',
@@ -18,10 +18,15 @@ interface DragonTile {
 
 export type Tile = NumberTile | WindTile | DragonTile;
 
-interface TileSet {
-    type: SetType,
+interface ChowSet {
+    type: 'CHOW',
+    tiles: NumberTile[]
+}
+
+type TileSet = {
+    type: Exclude<SetType, 'CHOW'>,
     tiles: Tile[]
-};
+} | ChowSet;
 
 export interface Hand {
     seatWind: Wind,
@@ -43,14 +48,14 @@ const hand: Hand = {
     doras: [{ suit: Suit.BAMBOO, value: 2 }],
     hiddenDoras: [{ suit: Suit.DOTS, value: 3 }],
     end: Ending.RON,
-    lastTile: { suit: Suit.BAMBOO, value: 5 },
+    lastTile: { suit: Suit.BAMBOO, value: 3 },
     riichi: true,
     concealead: true,
     ippatsu: false,
     dabura: false,
     sets: [
         { type: SetType.CHOW, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 4 }]},
-        { type: SetType.CHOW, tiles: [{ suit: Suit.BAMBOO, value: 5 }, { suit: Suit.BAMBOO, value: 6 }, { suit: Suit.BAMBOO, value: 7 }]},
+        { type: SetType.CHOW, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 4 }]},
         { type: SetType.CHOW, tiles: [{ suit: Suit.DOTS, value: 6 }, { suit: Suit.DOTS, value: 7 }, { suit: Suit.DOTS, value: 8 }]},
         { type: SetType.CHOW, tiles: [{ suit: Suit.BAMBOO, value: 1 }, { suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }]},
         { type: SetType.PAIR, tiles: [{ suit: Suit.WIND, value: Wind.NORTH }, { suit: Suit.WIND, value: Wind.NORTH }]},
@@ -106,7 +111,53 @@ const checkPinfu = (hand: Hand) => {
     if(!isValueless(pairTile, hand.seatWind, hand.prevalentWind)) {
         return 0;
     }
+
+    let setsWithLastTile = hand.sets.filter((a): a is ChowSet =>
+        a.type === SetType.CHOW &&
+        a.tiles.some(b => isSameTile(b, hand.lastTile))
+    );
+
+    let twoSidedWait = false;
+    setsWithLastTile.forEach(set => {
+        let ordered = set.tiles.sort((a, b) => a.value - b.value);
+        if(isSameTile(ordered[0], hand.lastTile) && ordered[2].value !== 9) {
+            twoSidedWait = true;
+        }
+
+        if(isSameTile(ordered[2], hand.lastTile) && ordered[0].value !== 1) {
+            twoSidedWait = true;
+        }
+    });
+
+    if(twoSidedWait) {
+        return 1;
+    }
     return 0;
+}
+
+// Concealed hand with two completely identical chows, i.e. the same values in the same suit
+const checkPureDoubleChow = (hand: Hand) => {
+    if(!hand.concealead) {
+        return 0;
+    }
+
+    let uniqueSets = new Set();
+
+    let chowSets = hand.sets.filter((a): a is ChowSet =>
+        a.type === SetType.CHOW
+    );
+
+    chowSets.forEach(s => {
+        let ordered = s.tiles.sort((a, b) => a.value - b.value);
+        uniqueSets.add(JSON.stringify(ordered));
+    });
+
+    if(uniqueSets.size < chowSets.length) {
+        return 1;
+    }
+
+    return 0;
+
 }
 
 const countFan = (hand: Hand) => {
@@ -114,7 +165,7 @@ const countFan = (hand: Hand) => {
     fan += checkRiichi(hand);
     fan += checkMenzenTsumo(hand);
     fan += checkPinfu(hand);
-
+    fan += checkPureDoubleChow(hand);
     return fan;
 }
 

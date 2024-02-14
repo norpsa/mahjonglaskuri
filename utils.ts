@@ -17,3 +17,7 @@ export const isValueless = (tile: Tile, seatWind: Wind, prevalentWind: Wind) => 
 
     return true;
 };
+
+export const isSameTile = (tileA: Tile, tileB: Tile) => {
+    return tileA.suit === tileB.suit && tileA.value === tileB.value;
+}
