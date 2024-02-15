@@ -69,7 +69,7 @@ const hand: Hand = {
 // An extra yaku, DABURU RIICHI, is awarded for declaring riichi in the first set of turns of the hand, i.e. in the player’s very
 // first turn. The first set of turns must be uninterrupted, i.e. if any claims for kong, pung or how, including concealed
 // kongs, has occurred before the riichi declaration, DABURU RIICHI is not possible.
-const checkRiichi = (hand: Hand) => {
+export const checkRiichi = (hand: Hand) => {
     if(!hand.riichi) {
         return 0;
     }
@@ -86,7 +86,7 @@ const checkRiichi = (hand: Hand) => {
 }
 
 // Winning on a self-draw on a concealed hand.
-const checkMenzenTsumo = (hand: Hand) => {
+export const checkMenzenTsumo = (hand: Hand) => {
     if(hand.concealead && hand.end === Ending.TSUMO) {
         return 1;
     }
@@ -97,7 +97,7 @@ const checkMenzenTsumo = (hand: Hand) => {
 // nor seat Wind, nor prevalent Wind. The winning tile is required to finish a chow with a two-sided wait. The hand is by
 // definition worth no minipoints, only the base 30 on a discard or 20 on self-draw.
 // JOTAIN PITÄÄ TEHDÄ MINIPOINTSEILLE
-const checkPinfu = (hand: Hand) => {
+export const checkPinfu = (hand: Hand) => {
     if(!hand.concealead) {
         return 0;
     }
@@ -136,7 +136,7 @@ const checkPinfu = (hand: Hand) => {
 }
 
 // Concealed hand with two completely identical chows, i.e. the same values in the same suit
-const checkPureDoubleChow = (hand: Hand) => {
+export const checkPureDoubleChow = (hand: Hand) => {
     if(!hand.concealead) {
         return 0;
     }
@@ -160,12 +160,32 @@ const checkPureDoubleChow = (hand: Hand) => {
 
 }
 
+export const checkAllSimples = (hand: Hand) => {
+    let allSimples = true;
+    hand.sets.forEach(set => {
+        set.tiles.forEach(tile => {
+            if(tile.suit === Suit.DRAGON || tile.suit === Suit.WIND) {
+                allSimples = false;
+            }
+
+            if(tile.value === 1 || tile.value === 9) {
+                allSimples = false;
+            }
+        });
+    });
+    if(allSimples) {
+        return 1;
+    }
+    return 0;
+}
+
 const countFan = (hand: Hand) => {
     let fan = 0;
     fan += checkRiichi(hand);
     fan += checkMenzenTsumo(hand);
     fan += checkPinfu(hand);
     fan += checkPureDoubleChow(hand);
+    fan += checkAllSimples(hand);
     return fan;
 }
 
