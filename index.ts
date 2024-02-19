@@ -233,10 +233,6 @@ const countMiniPointsForPungsAndKongs = (hand: Hand) => {
 
 const countMiniPointsForPairs = (hand: Hand) => {
     let minipoints = 0;
-    // No minipoints for seven pairs
-    if(hand.sets.filter(s => s.type === SetType.PAIR).length > 1) {
-        return 0;
-    }
 
     let pair = hand.sets.filter(s => s.type === SetType.PAIR)[0];
     if(pair.tiles[0].suit === Suit.WIND && (pair.tiles[0].value === hand.seatWind || pair.tiles[0].value === hand.prevalentWind)) {
@@ -299,11 +295,12 @@ export const countMiniPoints = (hand: Hand, isPinfu: Boolean, isSevenPairs: Bool
     return minipoints;
 }
 
-// Pitää palauttaa ne minipointsit kanssa, että lasketaanko ees
-const countFan = (hand: Hand) => {
-    let fan = 0;
-    fan += checkRiichi(hand);
-    fan += checkMenzenTsumo(hand);
+const calculatePoints = (hand: Hand) => {
+
+    // Check Fans
+    let han = 0;
+    han += checkRiichi(hand);
+    han += checkMenzenTsumo(hand);
 
     // Tosi elegantisti tehty :D 
     let isPinfu = false;
@@ -311,8 +308,16 @@ const countFan = (hand: Hand) => {
     if(pinfuPoints > 0) {
         isPinfu = true;
     }
-    fan += pinfuPoints;
-    fan += checkPureDoubleChow(hand);
-    fan += checkAllSimples(hand);
-    return fan;
+    han += pinfuPoints;
+    han += checkPureDoubleChow(hand);
+    han += checkAllSimples(hand);
+
+    // TODO CHECK THIS
+    let isSevenPairs = false;
+
+    // Check minipoints
+    let minipoints = countMiniPoints(hand, isPinfu, isSevenPairs);
+    let basicPoints = minipoints*(Math.pow(2, 2 + han));
+    
+    return basicPoints;
 }
