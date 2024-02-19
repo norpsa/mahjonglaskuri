@@ -3,6 +3,7 @@ import { Suit, Wind, Ending, SetType, Dragon, SetState } from './enums';
 
 let hand: Hand;
 
+// TODO: lisää testejä
 describe('Count minipoints', () => {
 
   beforeEach(() => {
@@ -28,7 +29,7 @@ describe('Count minipoints', () => {
   });
 
   test('Check minipoints example', () => {
-    expect(countMiniPoints(hand)).toBe(30);
+    expect(countMiniPoints(hand, false, false)).toBe(30);
   });
 
 });
