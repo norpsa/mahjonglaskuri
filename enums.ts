@@ -37,6 +37,13 @@ export const SetType = {
 
 export type SetType = GetValues<typeof SetType>;
 
+export const SetState = {
+    OPEN: 'OPEN',
+    CONCEALED: 'CONCEALED',
+} as const;
+
+export type SetState = GetValues<typeof SetState>;
+
 export const Ending = {
     RON: 'RON',
     TSUMO: 'TSUMO',
