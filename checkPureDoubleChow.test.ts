@@ -31,4 +31,14 @@ describe('checkPureDoubleChow', () => {
     expect(checkPureDoubleChow(hand)).toBe(1);
   });
 
+  test('Checks pure double chow requires concealed hand', () => {
+    hand.concealead = false;
+    expect(checkPureDoubleChow(hand)).toBe(0);
+  });
+
+  test('Checks pure double chow requires same suit', () => {
+    hand.sets[0] = { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.DOTS, value: 2 }, { suit: Suit.DOTS, value: 3 }, { suit: Suit.DOTS, value: 4 }]};
+    expect(checkPureDoubleChow(hand)).toBe(0);
+  });
+
 });

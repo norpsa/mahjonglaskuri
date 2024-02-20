@@ -161,6 +161,7 @@ export const checkPureDoubleChow = (hand: Hand) => {
 
 }
 
+// Hand with no terminals and honours.
 export const checkAllSimples = (hand: Hand) => {
     let allSimples = true;
     hand.sets.forEach(set => {
@@ -180,6 +181,80 @@ export const checkAllSimples = (hand: Hand) => {
     return 0;
 }
 
+// Hand with three chows of the same numerical sequence, one in each suit
+// Gives an extra fan if concealed.
+export const checkMixedTripleChow = (hand: Hand) => {
+
+    let chowSets = hand.sets.filter((a): a is ChowSet =>
+        a.type === SetType.CHOW
+    );
+    
+    if(chowSets.length < 3) {
+        return 0;
+    }
+
+    let orderedSets = chowSets.map(s => {
+        let ordered = s.tiles.sort((a, b) => a.value - b.value);
+        return {
+            suit: ordered[0].suit,
+            start: ordered[0].value
+        }
+    });
+
+    for(let i = 0; i < orderedSets.length; i++) {
+        let suitsToFind;
+        if(orderedSets[i].suit === Suit.BAMBOO) {
+            suitsToFind = [Suit.CHARS, Suit.DOTS];
+        } else if(orderedSets[i].suit === Suit.CHARS) {
+            suitsToFind = [Suit.BAMBOO, Suit.DOTS];
+        } else {
+            suitsToFind = [Suit.CHARS, Suit.BAMBOO];
+        }
+        if(suitsToFind.every(suit => orderedSets.find(a => a.suit === suit && a.start === orderedSets[i].start))) {
+            if(hand.concealead) {
+                return 2;
+            }
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+// Hand with three chows of the same numerical sequence, one in each suit
+// Gives an extra fan if concealed.
+export const checkPureStraight = (hand: Hand) => {
+
+    let chowSets = hand.sets.filter((a): a is ChowSet =>
+        a.type === SetType.CHOW
+    );
+    
+    if(chowSets.length < 3) {
+        return 0;
+    }
+
+    let orderedSets = chowSets.map(s => {
+        let ordered = s.tiles.sort((a, b) => a.value - b.value);
+        return {
+            suit: ordered[0].suit,
+            start: ordered[0].value
+        }
+    });
+
+    let suits = [Suit.BAMBOO, Suit.CHARS, Suit.DOTS];
+    for(let i = 0; i < suits.length; i++) {
+        if(orderedSets.find(s => s.start === 1 && s.suit === suits[i]) && 
+        orderedSets.find(s => s.start === 4 && s.suit === suits[i]) && orderedSets.find(s => s.start === 7 && s.suit === suits[i])) {
+            if(hand.concealead) {
+                return 2;
+            }
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 // Minipoints for winning
 // Concealed on a discard 30
 // Seven pairs(no further minipoints are added) 25
@@ -192,6 +267,11 @@ const countMiniPointsForWinning = (hand: Hand) => {
     return 20;
 }
 
+// Minipoints              Open     Concealed
+// Pung, 2-8               2        4
+// Pung, terminals/honours 4        8
+// Kong, 2-8               8        16
+// Kong, terminals/honours 16       32
 const countMiniPointsForPungsAndKongs = (hand: Hand) => {
     let minipoints = 0;
     hand.sets.filter(s => s.type === SetType.PUNG).forEach(set => {
@@ -231,6 +311,10 @@ const countMiniPointsForPungsAndKongs = (hand: Hand) => {
     return minipoints;
 }
 
+// 2 minipoints for:
+// • Pair of dragons
+// • Pair of seat wind
+// • Pair of prevalent wind
 const countMiniPointsForPairs = (hand: Hand) => {
     let minipoints = 0;
 
@@ -249,6 +333,9 @@ const countMiniPointsForPairs = (hand: Hand) => {
     return minipoints;
 }
 
+// 2 minipoints for:
+// • Winning on an edge, closed or pair wait
+// • Open pinfu
 const countMiniPointsForClosedAndEdgeWait = (hand: Hand) => {
     let closedWait = false;
 
@@ -286,11 +373,13 @@ export const countMiniPoints = (hand: Hand, isPinfu: Boolean, isSevenPairs: Bool
         minipoints += countMiniPointsForPairs(hand);
         minipoints += countMiniPointsForClosedAndEdgeWait(hand);
 
+        // • Winning on self-draw (except in case of pinfu)
         if(hand.end === Ending.TSUMO) {
             minipoints += 2;
         }
     }
     
+    // Round up to nearest 10
     minipoints = Math.ceil(minipoints/10.0)*10;
     return minipoints;
 }
@@ -301,8 +390,6 @@ const calculatePoints = (hand: Hand) => {
     let han = 0;
     han += checkRiichi(hand);
     han += checkMenzenTsumo(hand);
-
-    // Tosi elegantisti tehty :D 
     let isPinfu = false;
     let pinfuPoints = checkPinfu(hand);
     if(pinfuPoints > 0) {
@@ -318,6 +405,6 @@ const calculatePoints = (hand: Hand) => {
     // Check minipoints
     let minipoints = countMiniPoints(hand, isPinfu, isSevenPairs);
     let basicPoints = minipoints*(Math.pow(2, 2 + han));
-    
+
     return basicPoints;
 }
