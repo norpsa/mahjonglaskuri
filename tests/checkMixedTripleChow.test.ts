@@ -1,5 +1,5 @@
-import { checkMixedTripleChow, Hand } from './index';
-import { Suit, Wind, Ending, SetType, SetState } from './enums';
+import { checkMixedTripleChow, Hand } from '../src/index';
+import { Suit, Wind, Ending, SetType, SetState } from '../src/enums';
 
 let hand: Hand;
 

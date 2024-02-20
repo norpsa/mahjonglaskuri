@@ -4,12 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "bun test"
   },
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "ts-jest": "^29.1.2"
-  }
+  "license": "ISC"
 }

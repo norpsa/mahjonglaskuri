@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "ES2022",
+        "esModuleInterop": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "**/*.test.ts"
+    ]
+}

@@ -1,5 +1,5 @@
-import { checkAllSimples, Hand } from './index';
-import { Suit, Wind, Ending, SetType, Dragon, SetState } from './enums';
+import { checkAllSimples, Hand } from '../src/index';
+import { Suit, Wind, Ending, SetType, Dragon, SetState } from '../src/enums';
 
 let hand: Hand;
 

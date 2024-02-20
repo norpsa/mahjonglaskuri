@@ -1,9 +1,9 @@
-import { checkPinfu, Hand } from './index';
-import { Suit, Wind, Ending, SetType, SetState } from './enums';
+import { checkPureDoubleChow, Hand } from '../src/index';
+import { Suit, Wind, Ending, SetType, SetState } from '../src/enums';
 
 let hand: Hand;
 
-describe('checkPinfu', () => {
+describe('checkPureDoubleChow', () => {
 
   beforeEach(() => {
     hand = {
@@ -27,28 +27,18 @@ describe('checkPinfu', () => {
     }
   });
 
-  test('Checks PinfuHand', () => {
-    expect(checkPinfu(hand)).toBe(1);
+  test('Checks pure double chow', () => {
+    expect(checkPureDoubleChow(hand)).toBe(1);
   });
 
-  test('Checks that no Pinfu with value pair', () => {
-    hand.seatWind = Wind.NORTH;
-    expect(checkPinfu(hand)).toBe(0);
-  });
-
-  test('Checks that no Pinfu without two-sided wait', () => {
-    hand.lastTile = { suit: Suit.DOTS, value: 7 };
-    expect(checkPinfu(hand)).toBe(0);
-  });
-
-  test('Checks that no Pinfu without four chows', () => {
-    hand.sets[0] = { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 2 }]};
-    expect(checkPinfu(hand)).toBe(0);
-  });
-
-  test('Checks that no Pinfu with open hand', () => {
+  test('Checks pure double chow requires concealed hand', () => {
     hand.concealead = false;
-    expect(checkPinfu(hand)).toBe(0);
+    expect(checkPureDoubleChow(hand)).toBe(0);
+  });
+
+  test('Checks pure double chow requires same suit', () => {
+    hand.sets[0] = { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.DOTS, value: 2 }, { suit: Suit.DOTS, value: 3 }, { suit: Suit.DOTS, value: 4 }]};
+    expect(checkPureDoubleChow(hand)).toBe(0);
   });
 
 });

@@ -1,5 +1,5 @@
-import { isSameTile } from './utils';
-import { Suit } from './enums';
+import { isSameTile } from '../src/utils';
+import { Suit } from '../src/enums';
 
 const tileA = { suit: Suit.DOTS, value: 3 };
 const tileB = { suit: Suit.CHARS, value: 3 };
