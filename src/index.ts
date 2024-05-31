@@ -255,6 +255,13 @@ export const checkPureStraight = (hand: Hand) => {
     return 0;
 }
 
+// Dragon Pung/Kong
+export const checkYakuhai = (hand: Hand) => {
+    let dragonPongsAndKongs = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.DRAGON);
+    return dragonPongsAndKongs.length;
+
+}
+
 // Minipoints for winning
 // Concealed on a discard 30
 // Seven pairs(no further minipoints are added) 25
@@ -398,6 +405,7 @@ const calculatePoints = (hand: Hand) => {
     han += pinfuPoints;
     han += checkPureDoubleChow(hand);
     han += checkAllSimples(hand);
+    han += checkYakuhai(hand);
 
     // TODO CHECK THIS
     let isSevenPairs = false;

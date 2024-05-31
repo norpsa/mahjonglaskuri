@@ -3,7 +3,7 @@ import { Suit, Wind, Ending, SetType, Dragon, SetState } from '../src/enums';
 
 let hand: Hand;
 
-describe('checkPureDoubleChow', () => {
+describe('checkAllSimples', () => {
 
   beforeEach(() => {
     hand = {
