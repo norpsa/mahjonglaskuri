@@ -256,10 +256,22 @@ export const checkPureStraight = (hand: Hand) => {
 }
 
 // Dragon Pung/Kong
-export const checkYakuhai = (hand: Hand) => {
+export const checkDragonYakuhai = (hand: Hand) => {
     let dragonPongsAndKongs = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.DRAGON);
     return dragonPongsAndKongs.length;
 
+}
+
+// Seat Wind Pung/Kong
+export const checkSeatWind = (hand: Hand) => {
+    let seatWind = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.WIND && s.tiles[0].value === hand.seatWind);
+    return seatWind.length;
+}
+
+// Prevalend Wind Pung/Kong
+export const checkPrevalentWind = (hand: Hand) => {
+    let prevalentWind = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.WIND && s.tiles[0].value === hand.prevalentWind);
+    return prevalentWind.length;
 }
 
 // Minipoints for winning
@@ -405,7 +417,9 @@ const calculatePoints = (hand: Hand) => {
     han += pinfuPoints;
     han += checkPureDoubleChow(hand);
     han += checkAllSimples(hand);
-    han += checkYakuhai(hand);
+    han += checkDragonYakuhai(hand);
+    han += checkSeatWind(hand);
+    han += checkPrevalentWind(hand);
 
     // TODO CHECK THIS
     let isSevenPairs = false;
