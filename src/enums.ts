@@ -66,8 +66,11 @@ export const Yaku = {
     WHITE_DRAGON: 'White dragon',
     SEAT_WIND: 'Seat wind',
     PREVALENT_WIND: 'Prevalent wind',
-    SEVEN_PAIRS: 'Seven pairs',
+    AFTER_A_KONG: 'After a kong',
+    ROBBING_THE_KONG: 'Robbing the kong',
+    UNDER_THE_SEA: 'Under the Sea',
     OUTSIDE_HAND: 'Outside hand',
+    SEVEN_PAIRS: 'Seven pairs',
 } as const;
 
 export type Yaku = GetValues<typeof Yaku>;

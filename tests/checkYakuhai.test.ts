@@ -17,6 +17,9 @@ describe('checkYakuhai', () => {
       concealead: true,
       ippatsu: false,
       dabura: false,
+      afterKong: false,
+      robbingKong: false,
+      underTheSea: false,
       sets: [
           { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.DRAGON, value: Dragon.GREEN }, { suit: Suit.DRAGON, value: Dragon.GREEN }, { suit: Suit.DRAGON, value: Dragon.GREEN }]},
           { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 4 }]},

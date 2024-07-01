@@ -41,6 +41,9 @@ export interface Hand {
     concealead: boolean,
     ippatsu: boolean,
     dabura: boolean,
+    afterKong: boolean,
+    robbingKong: boolean,
+    underTheSea: boolean,
     sets: TileSet[],
 };
 
@@ -60,6 +63,9 @@ const hand: Hand = {
     concealead: true,
     ippatsu: false,
     dabura: false,
+    afterKong: false,
+    robbingKong: false,
+    underTheSea: false,
     sets: [
         { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 4 }]},
         { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 4 }]},
@@ -323,6 +329,31 @@ export const checkOutsideHand = (hand: Hand) => {
     }
 
     return [{ yaku: Yaku.OUTSIDE_HAND, han: 1 }];
+}
+
+// Winning on a replacement tile after declaring a kong. Counts as self-draw.
+export const checkAfterKong = (hand: Hand) => {
+    if(hand.afterKong) {
+        return [{ yaku: Yaku.AFTER_A_KONG, han: 1 }];
+    }
+    return [];
+}
+
+// Winning on a tile that an opponent adds to a melded pung in order to make a kong
+export const checkRobbingKong = (hand: Hand) => {
+    if(hand.robbingKong) {
+        return [{ yaku: Yaku.ROBBING_THE_KONG, han: 1 }];
+    }
+    return [];
+}
+
+// Winning on self-draw on the last tile in the wall. Does not combine with After a kong RINSHAN KAIHOU.
+// Winning on the discard after the last tile in the wall
+export const checkUnderTheSea = (hand: Hand) => {
+    if(hand.underTheSea) {
+        return [{ yaku: Yaku.UNDER_THE_SEA, han: 1 }];
+    }
+    return [];
 }
 
 // Minipoints for winning

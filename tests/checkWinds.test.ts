@@ -17,6 +17,9 @@ describe('checkWinds', () => {
       concealead: true,
       ippatsu: false,
       dabura: false,
+      afterKong: false,
+      robbingKong: false,
+      underTheSea: false,
       sets: [
           { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }]},
           { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 4 }]},

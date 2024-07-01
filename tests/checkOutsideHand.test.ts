@@ -17,6 +17,9 @@ describe('checkOutsideHand', () => {
       concealead: true,
       ippatsu: false,
       dabura: false,
+      afterKong: false,
+      robbingKong: false,
+      underTheSea: false,
       sets: [
           { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 1 }]},
           { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.DOTS, value: 7 }, { suit: Suit.DOTS, value: 8 }, { suit: Suit.DOTS, value: 9 }]},
