@@ -67,6 +67,7 @@ export const Yaku = {
     SEAT_WIND: 'Seat wind',
     PREVALENT_WIND: 'Prevalent wind',
     SEVEN_PAIRS: 'Seven pairs',
+    OUTSIDE_HAND: 'Outside hand',
 } as const;
 
 export type Yaku = GetValues<typeof Yaku>;

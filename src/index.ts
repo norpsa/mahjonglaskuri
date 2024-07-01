@@ -1,5 +1,5 @@
 import { Wind, Suit, Ending, SetType, Dragon, SetState, Yaku } from "./enums";
-import { countChow, isValueless, isSameTile } from "./utils";
+import { countChow, isValueless, isSameTile, isTerminalOrHonor } from "./utils";
 
 interface NumberTile {
     suit: 'BAMBOO' | 'DOTS' | 'CHARS',
@@ -303,8 +303,26 @@ export const checkPrevalentWind = (hand: Hand) => {
     return [];
 }
 
+// All sets contain terminals or honours, and the pair is terminals or honours.The hand contains at least one chow.Gives
+// an extra fan if concealed.
 export const checkOutsideHand = (hand: Hand) => {
+    let chowSets = hand.sets.filter((a): a is ChowSet =>
+        a.type === SetType.CHOW
+    );
+    
+    if(chowSets.length < 1) {
+        return [];
+    }
 
+    if(!hand.sets.every(s => s.tiles.some(isTerminalOrHonor))) {
+        return [];
+    }
+
+    if(hand.concealead) {
+        return [{ yaku: Yaku.OUTSIDE_HAND, han: 2 }];
+    }
+
+    return [{ yaku: Yaku.OUTSIDE_HAND, han: 1 }];
 }
 
 // Minipoints for winning
@@ -450,6 +468,7 @@ const calculatePoints = (hand: Hand) => {
     yakus.push(...checkDragonYakuhai(hand));
     yakus.push(...checkSeatWind(hand));
     yakus.push(...checkPrevalentWind(hand));
+    yakus.push(...checkOutsideHand(hand));
 
     // Check minipoints
     const han = yakus.reduce((a, b) => a + b.han, 0);

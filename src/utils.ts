@@ -21,3 +21,15 @@ export const isValueless = (tile: Tile, seatWind: Wind, prevalentWind: Wind) => 
 export const isSameTile = (tileA: Tile, tileB: Tile) => {
     return tileA.suit === tileB.suit && tileA.value === tileB.value;
 }
+
+export const isTerminalOrHonor = (tile: Tile) => {
+    if(tile.suit === Suit.DRAGON || tile.suit === Suit.WIND) {
+        return true;
+    }
+
+    if(tile.value === 1 || tile.value === 9) {
+        return true;
+    }
+
+    return false;
+}
