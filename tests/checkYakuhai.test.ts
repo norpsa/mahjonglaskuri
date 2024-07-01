@@ -28,18 +28,18 @@ describe('checkYakuhai', () => {
   });
 
   test('Checks Yakuhai', () => {
-    expect(checkDragonYakuhai(hand)).toBe(1);
+    expect(checkDragonYakuhai(hand).length).toBe(1);
   });
 
   test('Checks that kong is also okay', () => {
     hand.sets[0] = { type: SetType.KONG, state: SetState.CONCEALED, tiles: [{ suit: Suit.DRAGON, value: Dragon.GREEN }, { suit: Suit.DRAGON, value: Dragon.GREEN }, { suit: Suit.DRAGON, value: Dragon.GREEN }, { suit: Suit.DRAGON, value: Dragon.GREEN }]};
-    expect(checkDragonYakuhai(hand)).toBe(1);
+    expect(checkDragonYakuhai(hand).length).toBe(1);
   });
 
   test('Checks that white and red is also calculated', () => {
     hand.sets[0] = { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.DRAGON, value: Dragon.WHITE }, { suit: Suit.DRAGON, value: Dragon.WHITE }, { suit: Suit.DRAGON, value: Dragon.WHITE } ]};
     hand.sets[1] = { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.DRAGON, value: Dragon.RED }, { suit: Suit.DRAGON, value: Dragon.RED }, { suit: Suit.DRAGON, value: Dragon.RED } ]};
-    expect(checkDragonYakuhai(hand)).toBe(2);
+    expect(checkDragonYakuhai(hand).length).toBe(2);
   });
 
 });

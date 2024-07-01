@@ -1,4 +1,4 @@
-import { Wind, Suit, Ending, SetType, Dragon, SetState } from "./enums";
+import { Wind, Suit, Ending, SetType, Dragon, SetState, Yaku } from "./enums";
 import { countChow, isValueless, isSameTile } from "./utils";
 
 interface NumberTile {
@@ -44,6 +44,11 @@ export interface Hand {
     sets: TileSet[],
 };
 
+export interface YakuHans {
+    yaku: Yaku,
+    han: number,
+}
+
 const hand: Hand = {
     seatWind: Wind.EAST,
     prevalentWind: Wind.EAST,
@@ -72,27 +77,31 @@ const hand: Hand = {
 // first turn. The first set of turns must be uninterrupted, i.e. if any claims for kong, pung or how, including concealed
 // kongs, has occurred before the riichi declaration, DABURU RIICHI is not possible.
 export const checkRiichi = (hand: Hand) => {
+
+    let riichiYakus = [];
     if(!hand.riichi) {
-        return 0;
+        return riichiYakus;
     }
 
+    riichiYakus.push({ yaku: Yaku.RIICHI, han: 1 });
+
     if(hand.dabura) {
-        return 3;
+        riichiYakus.push({ yaku: Yaku.DABURA, han: 1 });
     }
 
     if(hand.ippatsu) {
-        return 2;
+        riichiYakus.push({ yaku: Yaku.IPPATSU, han: 1 });
     }
 
-    return 1;
+    return riichiYakus;
 }
 
 // Winning on a self-draw on a concealed hand.
 export const checkMenzenTsumo = (hand: Hand) => {
     if(hand.concealead && hand.end === Ending.TSUMO) {
-        return 1;
+        return [{ yaku: Yaku.MENZEN_TSUMO, han: 1 }];
     }
-    return 0;
+    return [];
 }
 
 // Concealed all chows hand with a valueless pair. I.e. a concealed hand with four chows and a pair that is neither dragons,
@@ -100,17 +109,17 @@ export const checkMenzenTsumo = (hand: Hand) => {
 // definition worth no minipoints, only the base 30 on a discard or 20 on self-draw.
 export const checkPinfu = (hand: Hand) => {
     if(!hand.concealead) {
-        return 0;
+        return [];
     }
 
     if(countChow(hand) !== 4) {
-        return 0;
+        return [];
     }
 
     // First tile of pair
     let pairTile = hand.sets.filter(a => a.type === SetType.PAIR)[0].tiles[0];
     if(!isValueless(pairTile, hand.seatWind, hand.prevalentWind)) {
-        return 0;
+        return [];
     }
 
     let setsWithLastTile = hand.sets.filter((a): a is ChowSet =>
@@ -131,15 +140,15 @@ export const checkPinfu = (hand: Hand) => {
     });
 
     if(twoSidedWait) {
-        return 1;
+        return [{ yaku: Yaku.PINFU, han: 1 }];;
     }
-    return 0;
+    return [];
 }
 
 // Concealed hand with two completely identical chows, i.e. the same values in the same suit
 export const checkPureDoubleChow = (hand: Hand) => {
     if(!hand.concealead) {
-        return 0;
+        return [];
     }
 
     let uniqueSets = new Set();
@@ -154,10 +163,10 @@ export const checkPureDoubleChow = (hand: Hand) => {
     });
 
     if(uniqueSets.size < chowSets.length) {
-        return 1;
+        return [{ yaku: Yaku.PURE_DOUBLE_CHOW, han: 1 }];
     }
 
-    return 0;
+    return [];
 
 }
 
@@ -176,9 +185,9 @@ export const checkAllSimples = (hand: Hand) => {
         });
     });
     if(allSimples) {
-        return 1;
+        return [{ yaku: Yaku.ALL_SIMPLES, han: 1 }];
     }
-    return 0;
+    return [];
 }
 
 // Hand with three chows of the same numerical sequence, one in each suit
@@ -190,7 +199,7 @@ export const checkMixedTripleChow = (hand: Hand) => {
     );
     
     if(chowSets.length < 3) {
-        return 0;
+        return [];
     }
 
     let orderedSets = chowSets.map(s => {
@@ -212,17 +221,18 @@ export const checkMixedTripleChow = (hand: Hand) => {
         }
         if(suitsToFind.every(suit => orderedSets.find(a => a.suit === suit && a.start === orderedSets[i].start))) {
             if(hand.concealead) {
-                return 2;
+                return [{ yaku: Yaku.MIXED_TRIPLE_CHOW, han: 2 }];
             }
-            return 1;
+            return [{ yaku: Yaku.MIXED_TRIPLE_CHOW, han: 1 }];
         }
     }
 
-    return 0;
+    return [];
 }
 
 // Hand with three chows of the same numerical sequence, one in each suit
 // Gives an extra fan if concealed.
+// TODO: tests
 export const checkPureStraight = (hand: Hand) => {
 
     let chowSets = hand.sets.filter((a): a is ChowSet =>
@@ -230,7 +240,7 @@ export const checkPureStraight = (hand: Hand) => {
     );
     
     if(chowSets.length < 3) {
-        return 0;
+        return [];
     }
 
     let orderedSets = chowSets.map(s => {
@@ -246,32 +256,55 @@ export const checkPureStraight = (hand: Hand) => {
         if(orderedSets.find(s => s.start === 1 && s.suit === suits[i]) && 
         orderedSets.find(s => s.start === 4 && s.suit === suits[i]) && orderedSets.find(s => s.start === 7 && s.suit === suits[i])) {
             if(hand.concealead) {
-                return 2;
+                return [{ yaku: Yaku.PURE_STRAIGHT, han: 2 }];
             }
-            return 1;
+            return [{ yaku: Yaku.PURE_STRAIGHT, han: 1 }];
         }
     }
 
-    return 0;
+    return [];
 }
 
 // Dragon Pung/Kong
 export const checkDragonYakuhai = (hand: Hand) => {
+    let dragonYakus = [];
     let dragonPongsAndKongs = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.DRAGON);
-    return dragonPongsAndKongs.length;
+    if(dragonPongsAndKongs.find(s => s.tiles[0].value === Dragon.WHITE)) {
+        dragonYakus.push({ yaku: Yaku.WHITE_DRAGON, han: 1 });
+    }
+
+    if(dragonPongsAndKongs.find(s => s.tiles[0].value === Dragon.RED)) {
+        dragonYakus.push({ yaku: Yaku.RED_DRAGON, han: 1 });
+    }
+
+    if(dragonPongsAndKongs.find(s => s.tiles[0].value === Dragon.GREEN)) {
+        dragonYakus.push({ yaku: Yaku.GREEN_DRAGON, han: 1 });
+    }
+
+    return dragonYakus;
 
 }
 
 // Seat Wind Pung/Kong
 export const checkSeatWind = (hand: Hand) => {
-    let seatWind = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.WIND && s.tiles[0].value === hand.seatWind);
-    return seatWind.length;
+    let seatWind = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).find(s => s.tiles[0].suit === Suit.WIND && s.tiles[0].value === hand.seatWind);
+    if(seatWind) {
+        return [{ yaku: Yaku.SEAT_WIND, han: 1 }];
+    }
+    return [];
 }
 
 // Prevalend Wind Pung/Kong
 export const checkPrevalentWind = (hand: Hand) => {
-    let prevalentWind = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).filter(s => s.tiles[0].suit === Suit.WIND && s.tiles[0].value === hand.prevalentWind);
-    return prevalentWind.length;
+    let prevalentWind = hand.sets.filter(s => s.type === SetType.PUNG || SetType.KONG).find(s => s.tiles[0].suit === Suit.WIND && s.tiles[0].value === hand.prevalentWind);
+    if(prevalentWind) {
+        return [{ yaku: Yaku.PREVALENT_WIND, han: 1 }];
+    }
+    return [];
+}
+
+export const checkOutsideHand = (hand: Hand) => {
+
 }
 
 // Minipoints for winning
@@ -405,26 +438,23 @@ export const countMiniPoints = (hand: Hand, isPinfu: Boolean, isSevenPairs: Bool
 
 const calculatePoints = (hand: Hand) => {
 
-    // Check Fans
-    let han = 0;
-    han += checkRiichi(hand);
-    han += checkMenzenTsumo(hand);
-    let isPinfu = false;
-    let pinfuPoints = checkPinfu(hand);
-    if(pinfuPoints > 0) {
-        isPinfu = true;
-    }
-    han += pinfuPoints;
-    han += checkPureDoubleChow(hand);
-    han += checkAllSimples(hand);
-    han += checkDragonYakuhai(hand);
-    han += checkSeatWind(hand);
-    han += checkPrevalentWind(hand);
+    let yakus: YakuHans[] = [];
 
-    // TODO CHECK THIS
-    let isSevenPairs = false;
+    yakus.push(...checkRiichi(hand));
+    yakus.push(...checkMenzenTsumo(hand));
+    yakus.push(...checkPinfu(hand));
+    yakus.push(...checkPureDoubleChow(hand));
+    yakus.push(...checkAllSimples(hand));
+    yakus.push(...checkMixedTripleChow(hand));
+    yakus.push(...checkPureStraight(hand));
+    yakus.push(...checkDragonYakuhai(hand));
+    yakus.push(...checkSeatWind(hand));
+    yakus.push(...checkPrevalentWind(hand));
 
     // Check minipoints
+    const han = yakus.reduce((a, b) => a + b.han, 0);
+    let isPinfu: boolean = !!yakus.find(a => a.yaku === Yaku.PINFU);
+    let isSevenPairs: boolean = !!yakus.find(a => a.yaku === Yaku.SEVEN_PAIRS);
     let minipoints = countMiniPoints(hand, isPinfu, isSevenPairs);
     let basicPoints = minipoints*(Math.pow(2, 2 + han));
 

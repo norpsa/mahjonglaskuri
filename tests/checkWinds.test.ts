@@ -28,22 +28,22 @@ describe('checkWinds', () => {
   });
 
   test('Checks PrevalentWind', () => {
-    expect(checkPrevalentWind(hand)).toBe(1);
+    expect(checkPrevalentWind(hand).length).toBe(1);
   });
 
   test('Checks that kong is also okay', () => {
-    hand.sets[0] = { type: SetType.KONG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }]};
-    expect(checkPrevalentWind(hand)).toBe(1);
+    hand.sets[0] = { type: SetType.KONG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }, { suit: Suit.WIND, value: Wind.EAST }]};
+    expect(checkPrevalentWind(hand).length).toBe(1);
   });
 
   test('Checks that wrong wind is not okay', () => {
-    hand.sets[0] = { type: SetType.KONG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.WEST }, { suit: Suit.WIND, value: Wind.WEST }, { suit: Suit.WIND, value: Wind.WEST }]};
-    expect(checkPrevalentWind(hand)).toBe(0);
+    hand.sets[0] = { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.WEST }, { suit: Suit.WIND, value: Wind.WEST }, { suit: Suit.WIND, value: Wind.WEST }]};
+    expect(checkPrevalentWind(hand).length).toBe(0);
   });
 
   test('Checks SeatWind', () => {
-    hand.sets[0] = { type: SetType.KONG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.NORTH }, { suit: Suit.WIND, value: Wind.NORTH }, { suit: Suit.WIND, value: Wind.NORTH }]};
-    expect(checkSeatWind(hand)).toBe(1);
+    hand.sets[0] = { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.NORTH }, { suit: Suit.WIND, value: Wind.NORTH }, { suit: Suit.WIND, value: Wind.NORTH }]};
+    expect(checkSeatWind(hand).length).toBe(1);
   });
 
 });

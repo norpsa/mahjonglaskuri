@@ -28,22 +28,22 @@ describe('checkAllSimples', () => {
   });
 
   test('Checks pure double chow', () => {
-    expect(checkAllSimples(hand)).toBe(1);
+    expect(checkAllSimples(hand).length).toBe(1);
   });
 
   test('Checks that no winds allowed', () => {
     hand.sets[4] = { type: SetType.PAIR, state: SetState.CONCEALED, tiles: [{ suit: Suit.WIND, value: Wind.NORTH }, { suit: Suit.WIND, value: Wind.NORTH }]};
-    expect(checkAllSimples(hand)).toBe(0);
+    expect(checkAllSimples(hand).length).toBe(0);
   });
 
   test('Checks that no dragons allowed', () => {
     hand.sets[4] = { type: SetType.PAIR, state: SetState.CONCEALED, tiles: [{ suit: Suit.DRAGON, value: Dragon.GREEN }, { suit: Suit.DRAGON, value: Dragon.GREEN  }]};
-    expect(checkAllSimples(hand)).toBe(0);
+    expect(checkAllSimples(hand).length).toBe(0);
   });
 
   test('Checks that no terminals allowed', () => {
     hand.sets[0] = { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 1 }, { suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 3 }]};
-    expect(checkAllSimples(hand)).toBe(0);
+    expect(checkAllSimples(hand).length).toBe(0);
   });
 
 });

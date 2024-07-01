@@ -28,27 +28,27 @@ describe('checkPinfu', () => {
   });
 
   test('Checks Pinfu hand', () => {
-    expect(checkPinfu(hand)).toBe(1);
+    expect(checkPinfu(hand).length).toBe(1);
   });
 
   test('Checks that no Pinfu with value pair', () => {
     hand.seatWind = Wind.NORTH;
-    expect(checkPinfu(hand)).toBe(0);
+    expect(checkPinfu(hand).length).toBe(0);
   });
 
   test('Checks that no Pinfu without two-sided wait', () => {
     hand.lastTile = { suit: Suit.DOTS, value: 7 };
-    expect(checkPinfu(hand)).toBe(0);
+    expect(checkPinfu(hand).length).toBe(0);
   });
 
   test('Checks that no Pinfu without four chows', () => {
     hand.sets[0] = { type: SetType.PUNG, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 2 }, { suit: Suit.BAMBOO, value: 2 }]};
-    expect(checkPinfu(hand)).toBe(0);
+    expect(checkPinfu(hand).length).toBe(0);
   });
 
   test('Checks that no Pinfu with open hand', () => {
     hand.concealead = false;
-    expect(checkPinfu(hand)).toBe(0);
+    expect(checkPinfu(hand).length).toBe(0);
   });
 
 });

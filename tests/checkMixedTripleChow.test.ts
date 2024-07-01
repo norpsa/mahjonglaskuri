@@ -28,27 +28,30 @@ describe('checkMixedTripleChow', () => {
   });
 
   test('Checks mixed triple chow concealed', () => {
-    expect(checkMixedTripleChow(hand)).toBe(2);
+    expect(checkMixedTripleChow(hand).length).toBe(1);
+    expect(checkMixedTripleChow(hand)[0].han).toBe(2);
   });
 
   test('Checks mixed triple chow not concealed', () => {
     hand.concealead = false;
-    expect(checkMixedTripleChow(hand)).toBe(1);
+    expect(checkMixedTripleChow(hand).length).toBe(1);
+    expect(checkMixedTripleChow(hand)[0].han).toBe(1);
   });
 
   test('Checks mixed triple chow requires all suits', () => {
     hand.sets[0] = { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.DOTS, value: 2 }, { suit: Suit.DOTS, value: 3 }, { suit: Suit.DOTS, value: 4 }]};
-    expect(checkMixedTripleChow(hand)).toBe(0);
+    expect(checkMixedTripleChow(hand).length).toBe(0);
   });
 
   test('Checks mixed triple chow requires same start tiles', () => {
     hand.sets[0] = { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 4 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 5 }]};
-    expect(checkMixedTripleChow(hand)).toBe(0);
+    expect(checkMixedTripleChow(hand).length).toBe(0);
   });
 
   test('Checks mixed triple chow orders correctly', () => {
     hand.sets[0] = { type: SetType.CHOW, state: SetState.CONCEALED, tiles: [{ suit: Suit.BAMBOO, value: 4 }, { suit: Suit.BAMBOO, value: 3 }, { suit: Suit.BAMBOO, value: 2 }]};
-    expect(checkMixedTripleChow(hand)).toBe(2);
+    expect(checkMixedTripleChow(hand).length).toBe(1);
+    expect(checkMixedTripleChow(hand)[0].han).toBe(2);
   });
 
 });

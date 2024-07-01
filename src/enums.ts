@@ -50,3 +50,23 @@ export const Ending = {
 } as const;
 
 export type Ending = GetValues<typeof Ending>;
+
+export const Yaku = {
+    RIICHI: 'Riichi',
+    IPPATSU: 'Ippatsu',
+    DABURA: 'Dabura riichi',
+    MENZEN_TSUMO: 'Menzen tsumo',
+    PINFU: 'Pinfu',
+    PURE_DOUBLE_CHOW: 'Pure double chow',
+    ALL_SIMPLES: 'All simples',
+    MIXED_TRIPLE_CHOW: 'Mixed triple chow',
+    PURE_STRAIGHT: 'Pure straight',
+    GREEN_DRAGON: 'Green dragon',
+    RED_DRAGON: 'Red dragon',
+    WHITE_DRAGON: 'White dragon',
+    SEAT_WIND: 'Seat wind',
+    PREVALENT_WIND: 'Prevalent wind',
+    SEVEN_PAIRS: 'Seven pairs',
+} as const;
+
+export type Yaku = GetValues<typeof Yaku>;
